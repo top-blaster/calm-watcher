@@ -1,0 +1,24 @@
+name: calm-watcher
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "test = one test push, watch = run the watcher"
+        type: choice
+        options: [watch, test]
+        default: watch
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - name: run
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          if [ "${{ inputs.mode }}" = "test" ]; then
+            python3 calm_watcher.py --test
+          else
+            python3 calm_watcher.py
+          fi
